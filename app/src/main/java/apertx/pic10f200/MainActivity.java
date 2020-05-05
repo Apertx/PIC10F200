@@ -11,7 +11,7 @@ import android.view.View.*;
 import android.text.*;
 
 public class MainActivity extends Activity {
-	String[] dict = {"ADDWF","ANDWF","CLRF","CLRW","COMF","DECF","DECFSZ","INCF","INCFSZ","IORWF","MOVF","MOVWF","NOP","RLF","RRF","SUBWF","SWAPF","XORWF","BCF","BSF","BTFSC","BTFSS","ANDLW","CALL","CLRWDT","GOTO","IORLW","MOVLW","OPTION","RETLW","SLEEP","TRIS","XORLW",""};
+	String[] dict = {"ADDWF","ANDWF","CLRF","CLRW","COMF","DECF","DECFSZ","INCF","INCFSZ","IORWF","MOVF","MOVWF","NOP","RLF","RRF","SUBWF","SWAPF","XORWF","BCF","BSF","BTFSC","BTFSS","ANDLW","CALL","CLRWDT","GOTO","IORLW","MOVLW","OPTION","RETLW","SLEEP","TRIS","XORLW",null};
 	int[] opcode = {7,5,1,64,9,3,11,10,15,4,8,1,0,13,12,2,14,6,4,5,6,7,14,9,8,5,13,12,2,8,3,0,15};
 	List<Integer> bytecode = new ArrayList<Integer>();
 	List<String> label = new ArrayList<String>();
@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
 		SharedPreferences settings = getSharedPreferences("settings", this.MODE_PRIVATE);
 		editor.textSize = settings.getFloat("textSize", 18);
 		editor.textColor = settings.getInt("textColor", Color.CYAN);
+		setTheme(settings.getInt("theme", android.R.style.Theme_Material));
 		super.onCreate(savedInstanceState);
 		text = new EditText(this);
 		text.setGravity(Gravity.TOP);
@@ -61,6 +62,7 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case 10:
+				build(text.getText().toString());
 				break;
 			case 17:
 				startActivity(new Intent(MainActivity.this, InstructionActivity.class));
@@ -89,10 +91,19 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	void build(String str) {
+		str = str.trim();
+		
+		String[] starr = str.split("\n");
+		byte code;
+		for (code = 0; starr[0] != dict[code] && code < 33; code++);
+		
+	}
+
 	int assemble(String p0, String p1, String p2) {
 		int ret = -1;
 		byte code;
-		for (code = 0;p0 != dict[code] && code < 33;code++);
+		for (code = 0; p0 != dict[code] && code < 33; code++);
 		if (code == 3 || code == 12 || code == 24 || code == 30 || code == 31)
 			ret = opcode[code];
 		else if (code == 2 || code == 11)
