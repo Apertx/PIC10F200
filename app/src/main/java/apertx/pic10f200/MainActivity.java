@@ -9,6 +9,7 @@ import android.content.*;
 import java.util.*;
 import android.view.View.*;
 import android.text.*;
+import java.io.*;
 
 public class MainActivity extends Activity {
 	String[] dict = {"ADDWF","ANDWF","CLRF","CLRW","COMF","DECF","DECFSZ","INCF","INCFSZ","IORWF","MOVF","MOVWF","NOP","RLF","RRF","SUBWF","SWAPF","XORWF","BCF","BSF","BTFSC","BTFSS","ANDLW","CALL","CLRWDT","GOTO","IORLW","MOVLW","OPTION","RETLW","SLEEP","TRIS","XORLW",null};
@@ -64,6 +65,9 @@ public class MainActivity extends Activity {
 			case 10:
 				build(text.getText().toString());
 				break;
+			case 3:
+				save();
+				break;
 			case 17:
 				startActivity(new Intent(MainActivity.this, InstructionActivity.class));
 				break;
@@ -91,12 +95,10 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	void build(String str) {
-		str = str.trim();
-		
-		String[] starr = str.split("\n");
+	void build(String p0) {
+		CharSequence s0 = p0.trim();
 		byte code;
-		for (code = 0; starr[0] != dict[code] && code < 33; code++);
+		for (code = 0; s0 != dict[code] && code < 33; code++);
 		
 	}
 
@@ -127,7 +129,13 @@ public class MainActivity extends Activity {
 		return ret;
 	}
 
-
+	void save() {
+		try {
+			OutputStream os = new FileOutputStream(new File("1.txt"));
+			os.write("lol".getBytes());
+			os.close();
+		} catch (Exception e) {}
+	}
 
 	@Override
 	public void onBackPressed() {
