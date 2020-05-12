@@ -3,7 +3,7 @@
 	package="apertx.pic10f200">
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	<application
-		android:icon="@drawable/ic_launcher"
+		android:icon="@android:drawable/ic_menu_save"
 		android:label="PIC10F200"
 		android:theme="@android:style/Theme.Material">
 		<activity android:name=".MainActivity">

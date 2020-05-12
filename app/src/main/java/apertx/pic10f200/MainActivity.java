@@ -8,11 +8,11 @@ import android.graphics.*;
 import android.content.*;
 import java.util.*;
 import android.view.View.*;
-import android.text.*;
 import java.io.*;
+import android.widget.TextView.*;
 
 public class MainActivity extends Activity {
-	String[] dict = {"ADDWF","ANDWF","CLRF","CLRW","COMF","DECF","DECFSZ","INCF","INCFSZ","IORWF","MOVF","MOVWF","NOP","RLF","RRF","SUBWF","SWAPF","XORWF","BCF","BSF","BTFSC","BTFSS","ANDLW","CALL","CLRWDT","GOTO","IORLW","MOVLW","OPTION","RETLW","SLEEP","TRIS","XORLW",null};
+	String[] dict = {62122768,62420678,2071645,2071662,2074373,2094244,2012571147,2251848,-2130938705,69852091,2372562,73550019,77487,81228,81414,79250671,79309075,83704906,"BCF","BSF","BTFSC","BTFSS","ANDLW","CALL","CLRWDT","GOTO","IORLW","MOVLW","OPTION","RETLW","SLEEP","TRIS","XORLW",null};
 	int[] opcode = {7,5,1,64,9,3,11,10,15,4,8,1,0,13,12,2,14,6,4,5,6,7,14,9,8,5,13,12,2,8,3,0,15};
 	List<Integer> bytecode = new ArrayList<Integer>();
 	List<String> label = new ArrayList<String>();
@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
 		float textSize;
 		int textColor;
 		long backPress;
-		Editable backup;
+		int backup;
 	}
 	_editor editor = new _editor();
 
@@ -40,8 +40,9 @@ public class MainActivity extends Activity {
 		text.setTextSize(editor.textSize);
 		text.setTextColor(editor.textColor);
 		text.setBackgroundColor(Color.TRANSPARENT);
+		text.setHorizontallyScrolling(true);
 		setContentView(text);
-		editor.backup = text.getText();
+		editor.backup = text.getText().hashCode();
 	}
 
 	@Override
@@ -63,7 +64,7 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case 10:
-				build(text.getText().toString());
+				build(text.getText().toString().trim().hashCode());
 				break;
 			case 3:
 				save();
@@ -72,13 +73,14 @@ public class MainActivity extends Activity {
 				startActivity(new Intent(MainActivity.this, InstructionActivity.class));
 				break;
 			case 19:
-				if (editor.backup != text.getText())
+				if (editor.backup != text.getText().hashCode())
 					new AlertDialog.Builder(MainActivity.this).
 						setTitle("Save file?").
 						setMessage("Save modified open file?").
 						setPositiveButton("Yes", new AlertDialog.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface p1, int p2) {
+								save();
 								finish();
 							}
 						}).
@@ -95,10 +97,9 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	void build(String p0) {
-		CharSequence s0 = p0.trim();
+	void build(int p0) {
 		byte code;
-		for (code = 0; s0 != dict[code] && code < 33; code++);
+		for (code = 0; p0 != dict[code].hashCode() && code < 33; code++);
 		
 	}
 
@@ -131,22 +132,21 @@ public class MainActivity extends Activity {
 
 	void save() {
 		try {
-			OutputStream os = new FileOutputStream(new File("1.txt"));
-			os.write("lol".getBytes());
-			os.close();
+			editor.backup = text.getText().hashCode();
 		} catch (Exception e) {}
 	}
 
 	@Override
 	public void onBackPressed() {
 		if (editor.backPress + 2000 > System.currentTimeMillis())
-			if (editor.backup != text.getText())
+			if (editor.backup != text.getText().hashCode())
 				new AlertDialog.Builder(MainActivity.this).
 					setTitle("Save file?").
 					setMessage("Save modified open file?").
 					setPositiveButton("Yes", new AlertDialog.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface p1, int p2) {
+							save();
 							finish();
 						}
 					}).
@@ -159,7 +159,7 @@ public class MainActivity extends Activity {
 			else
 				finish();
 		else {
-			Toast.makeText(this, "press back once more", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Press back once more", Toast.LENGTH_SHORT).show();
 			editor.backPress = System.currentTimeMillis();
 		}
 	}
