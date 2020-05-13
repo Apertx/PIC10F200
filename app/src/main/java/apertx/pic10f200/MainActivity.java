@@ -12,7 +12,7 @@ import java.io.*;
 import android.widget.TextView.*;
 
 public class MainActivity extends Activity {
-	String[] dict = {62122768,62420678,2071645,2071662,2074373,2094244,2012571147,2251848,-2130938705,69852091,2372562,73550019,77487,81228,81414,79250671,79309075,83704906,"BCF","BSF","BTFSC","BTFSS","ANDLW","CALL","CLRWDT","GOTO","IORLW","MOVLW","OPTION","RETLW","SLEEP","TRIS","XORLW",null};
+	int [] dict = {62122768,62420678,2071645,2071662,2074373,2094244,2012571147,2251848,-2130938705,69852091,2372562,73550019,77487,81228,81414,79250671,79309075,83704906,65573,66069,63524740,63524756,62420354,2060894,1990869374,2193763,69851767,73549695,-1956807563,77867468,78984887,2583592,83704582,0};
 	int[] opcode = {7,5,1,64,9,3,11,10,15,4,8,1,0,13,12,2,14,6,4,5,6,7,14,9,8,5,13,12,2,8,3,0,15};
 	List<Integer> bytecode = new ArrayList<Integer>();
 	List<String> label = new ArrayList<String>();
@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case 10:
-				build(text.getText().toString().trim().hashCode());
+				build(text.getText().toString().trim());
 				break;
 			case 3:
 				save();
@@ -97,16 +97,20 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	void build(int p0) {
-		byte code;
-		for (code = 0; p0 != dict[code].hashCode() && code < 33; code++);
-		
+	void build(String p0) {
+		if (p0.contains(" ")) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; (i < p0.length() - 1) && (p0.charAt(i) != ' '); i++)
+				sb.append(p0.charAt(i));
+			String p1 = sb.toString();
+		} else
+			bytecode.add(assemble(p0, "", ""));
 	}
 
 	int assemble(String p0, String p1, String p2) {
 		int ret = -1;
 		byte code;
-		for (code = 0; p0 != dict[code] && code < 33; code++);
+		for (code = 0; p0.hashCode() != dict[code] && code < 33; code++);
 		if (code == 3 || code == 12 || code == 24 || code == 30 || code == 31)
 			ret = opcode[code];
 		else if (code == 2 || code == 11)
